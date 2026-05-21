@@ -37,41 +37,57 @@ OUTPUT_COLUMNS = [
 # NOT dimensions, heights, or other measurements.
 # ─────────────────────────────────────────────
 DWELLING_PATTERNS = [
-    # "10 no. dwellinghouses" / "7 dwellings" / "dwellinghouse" / "dwellinghouses"
-    r'\b(\d+)\s*(?:no\.?|x)?\s*(?:new\s+)?dwellings?(?:houses?)?\b',
+    # "10 no. dwellinghouses" / "10 nos dwellings" / "7 dwellings" / "dwellinghouse(s)"
+    # (?:s|\s*houses?) handles both "dwellings" plural and "dwellinghouse(s)" compound
+    r'\b(\d+)\s*(?:nos?\.?|x)?\s*(?:new\s+)?dwelling(?:s|\s*houses?)?\b',
     # "10no. residential units" / "10 residential plots" / "10 residential dwellings"
-    r'\b(\d+)\s*(?:no\.?|x)?\s*(?:new\s+)?residential\s+(?:units?|plots?|homes?|dwellings?)',
+    r'\b(\d+)\s*(?:nos?\.?|x)?\s*(?:new\s+)?residential\s+(?:units?|plots?|homes?|dwellings?)',
     # "10 affordable homes" / "10 new homes" / "10 new build homes" / "10 new-build homes"
-    r'\b(\d+)\s*(?:no\.?|x)?\s*(?:affordable\s+|new[\s-]build\s+|new\s+)+homes?',
+    r'\b(\d+)\s*(?:nos?\.?|x)?\s*(?:affordable\s+|new[\s-]build\s+|new\s+)+homes?',
     # "10 self-contained flats" / "10 new flats" / "10 apartments" / "10 maisonettes"
-    r'\b(\d+)\s*(?:no\.?|x)?\s*(?:new\s+)?(?:self.contained\s+)?(?:flats?|apartments?|maisonettes?)\b',
-    # "5 x 3-bedroom houses" / "10 no. 4-bed dwellinghouses" — no./x required to avoid
+    r'\b(\d+)\s*(?:nos?\.?|x)?\s*(?:new\s+)?(?:self.contained\s+)?(?:flats?|apartments?|maisonettes?)\b',
+    # "5 x 3-bedroom houses" / "10 no. 4-bed dwellinghouses" — no./nos/x required to avoid
     # reading "5 bedroom house" (1 house) as 5 dwellings
-    r'\b(\d+)\s*(?:no\.?|x)\s+\d+[\s-]bed(?:room)?\s+(?:new\s+)?(?:detached|semi.detached|terraced|linked|town)?\s*(?:houses?|homes?|bungalows?|dwellings?)\b',
+    r'\b(\d+)\s*(?:nos?\.?|x)\s+\d+[\s-]bed(?:room)?\s+(?:new\s+)?(?:detached|semi.detached|terraced|linked|town)?\s*(?:houses?|homes?|bungalows?|dwellings?)\b',
     # "10 detached/semi-detached/terraced/affordable houses"
-    r'\b(\d+)\s*(?:no\.?|x)?\s*(?:new\s+)?(?:detached|semi.detached|terraced|affordable|market|linked|town)\s+(?:houses?|homes?|dwellings?)\b',
+    r'\b(\d+)\s*(?:nos?\.?|x)?\s*(?:new\s+)?(?:detached|semi.detached|terraced|affordable|market|linked|town)\s+(?:houses?|homes?|dwellings?)\b',
     # "X affordable/market/shared ownership/social rented units"
-    r'\b(\d+)\s*(?:no\.?|x)?\s*(?:affordable|market|shared[\s-]ownership|social[\s-]rented?|help[\s-]to[\s-]buy|starter)\s+(?:housing\s+)?units?',
+    r'\b(\d+)\s*(?:nos?\.?|x)?\s*(?:affordable|market|shared[\s-]ownership|social[\s-]rented?|help[\s-]to[\s-]buy|starter)\s+(?:housing\s+)?units?',
+    # "X serviced plots" / "X self-build plots" / "X custom-build plots"
+    r'\b(\d+)\s*(?:nos?\.?|x)?\s*(?:serviced|self.build|custom.build)\s+(?:and\s+custom.build\s+)?plots?',
     # "conversion to/into/of X flats/apartments/units"
-    r'conversion\s+(?:to|into|of)\s+(\d+)\s*(?:no\.?)?\s*(?:new\s+)?(?:flats?|apartments?|dwellings?|residential\s+units?)',
+    r'conversion\s+(?:to|into|of)\s+(\d+)\s*(?:nos?\.?)?\s*(?:new\s+)?(?:flats?|apartments?|dwellings?|residential\s+units?)',
     # "X-storey building containing X flats" — takes the flats count, not the storey count
-    r'containing\s+(\d+)\s*(?:no\.?)?\s*(?:new\s+)?(?:flats?|apartments?|dwellings?|residential\s+units?)',
+    r'containing\s+(\d+)\s*(?:nos?\.?)?\s*(?:new\s+)?(?:flats?|apartments?|dwellings?|residential\s+units?)',
     # "land for X dwellings/homes/houses" / "site for X dwellings"
-    r'(?:land|site)\s+for\s+(?:the\s+)?(?:erection\s+of\s+)?(\d+)\s*(?:no\.?)?\s*(?:new\s+)?(?:dwellings?|houses?|homes?|flats?|units?)',
-    # "outline permission for X dwellings" / "outline planning for X homes"
-    r'outline\s+(?:planning\s+)?(?:permission\s+)?for\s+(?:the\s+)?(?:erection\s+of\s+)?(\d+)\s*(?:no\.?)?\s*(?:new\s+)?(?:dwellings?|houses?|homes?|flats?|units?)',
+    r'(?:land|site)\s+for\s+(?:the\s+)?(?:erection\s+of\s+)?(\d+)\s*(?:nos?\.?)?\s*(?:new\s+)?(?:dwellings?|houses?|homes?|flats?|units?)',
+    # "outline permission for X" / "outline planning for X" / "outline application for X"
+    r'outline\s+(?:planning\s+|application\s+)?(?:permission\s+)?for\s+(?:the\s+)?(?:erection\s+of\s+)?(\d+)\s*(?:nos?\.?)?\s*(?:new\s+)?(?:dwellings?|houses?|homes?|flats?|units?)',
     # "for 5-7 dwellings" range — take upper number
     r'for\s+\d+[\-–]\s*(\d+)\s*dwellings?',
     # "erection of N" — housing words only, not dimensions
-    r'erection\s+of\s+(\d+)\s*(?:no\.?)?\s*(?:new\s+)?(?:dwellings?|houses?|homes?|flats?|apartments?|residential)',
+    r'erection\s+of\s+(\d+)\s*(?:nos?\.?)?\s*(?:new\s+)?(?:dwellings?|houses?|homes?|flats?|apartments?|residential)',
     # "construction of N dwellings/homes/flats"
-    r'construction\s+of\s+(\d+)\s*(?:no\.?)?\s*(?:new\s+)?(?:dwellings?|houses?|homes?|flats?|apartments?|residential)',
+    r'construction\s+of\s+(\d+)\s*(?:nos?\.?)?\s*(?:new\s+)?(?:dwellings?|houses?|homes?|flats?|apartments?|residential)',
     # "development of N dwellings/homes"
-    r'development\s+of\s+(\d+)\s*(?:no\.?)?\s*(?:new\s+)?(?:dwellings?|houses?|homes?)',
+    r'development\s+of\s+(\d+)\s*(?:nos?\.?)?\s*(?:new\s+)?(?:dwellings?|houses?|homes?)',
     # "into N dwellings/flats" (conversions not caught above)
-    r'into\s+(\d+)\s*(?:no\.?)?\s*(?:new\s+)?(?:dwellings?|flats?|apartments?|units?)',
+    r'into\s+(\d+)\s*(?:nos?\.?)?\s*(?:new\s+)?(?:dwellings?|flats?|apartments?|units?)',
     # "provide N dwellings/homes/flats"
-    r'provide\s+(\d+)\s*(?:no\.?)?\s*(?:new\s+)?(?:dwellings?|houses?|homes?|flats?|apartments?)',
+    r'provide\s+(\d+)\s*(?:nos?\.?)?\s*(?:new\s+)?(?:dwellings?|houses?|homes?|flats?|apartments?)',
+]
+
+# Patterns that always indicate exactly 1 dwelling (no digit to capture).
+SINGLE_DWELLING_PATTERNS = [
+    # "a single dwelling" / "a single dwellinghouse" / "a single storeydwellinghouse" (typo)
+    # \w*? allows for concatenated prefix words (e.g. "storey" run into "dwelling")
+    r'\ba\s+single\s+(?:new\s+)?\w*?dwelling(?:s|\s*house(?:s)?)?\b',
+    # "erection of a dwelling" / "erection of a dwellinghouse" / "erection of a new home"
+    r'erection\s+of\s+a\s+(?:new\s+)?(?:dwelling\s*(?:house)?|house|home|bungalow)\b',
+    # "replacement dwelling" / "replacement dwellinghouse"
+    r'\breplacement\s+(?:new\s+)?dwelling\s*(?:house)?\b',
+    # "one dwelling" / "one dwellinghouse" / "one new home" / "one flat"
+    r'\bone\s+(?:new\s+)?(?:dwelling\s*(?:house)?|house|home|flat|apartment|bungalow)\b',
 ]
 
 # Keywords that suggest a residential application even when no count can be extracted.
@@ -97,6 +113,12 @@ EXCLUDED_DESC_PHRASES = [
     "advertisement consent",
     "listed building consent",
     "prior notification",
+    "re-roofing",
+    "roof extension",
+    "loft conversion",
+    "solar panel",
+    "boundary fence",
+    "change of use to hmo",
 ]
 
 
@@ -109,7 +131,7 @@ def extract_dwelling_count(row: dict) -> int | None:
         except ValueError:
             pass
 
-    # 2. Regex on description
+    # 2. Regex on description — patterns with a digit capture group
     desc = row.get("description", "")
     for pattern in DWELLING_PATTERNS:
         m = re.search(pattern, desc, re.IGNORECASE)
@@ -118,6 +140,12 @@ def extract_dwelling_count(row: dict) -> int | None:
                 return int(m.group(1))
             except (ValueError, IndexError):
                 pass
+
+    # 3. Word-number patterns that always imply exactly 1 dwelling
+    for pattern in SINGLE_DWELLING_PATTERNS:
+        if re.search(pattern, desc, re.IGNORECASE):
+            return 1
+
     return None
 
 
